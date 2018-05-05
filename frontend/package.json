@@ -1,11 +1,12 @@
 {
-  "name": "limerick-land",
+  "name": "limerick-land-frontend",
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
     "react-scripts": "1.1.4"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "react": "^16.3.2",
     "react-dom": "^16.3.2"
   },
