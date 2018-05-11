@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import headerImg from './header.png';
+import rulesImg from './rules.png';
 import {
   BrowserRouter as Router,
   Route,
@@ -14,14 +16,14 @@ class App extends Component {
       <Router>
         <div className="App">
           <header className="App-header">
-            <h1 className="App-title">
-              <Link className="unstyled-link" to="/">
-                Limerick Land
-              </Link>
-            </h1>
+            <img className="header-img" src={headerImg} height='100%' width='100%' alt="limerick header with kitty on tree branch"></img>
           </header>
+        <div className="content">
+          <img className="rules-img" src={rulesImg} alt="limerick header with kitty on tree branch"/>
           <Route exact path="/" component={Home} />
           <Route path="/line/:lineId" component={Line} />
+        </div>
+        
         </div>
       </Router>
     );

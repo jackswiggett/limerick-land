@@ -84,13 +84,15 @@ class Home extends Component {
       <div>
         <h3>Select the next line:</h3>
         {this.state.children.map(this.renderLineLink)}
+        <div className="entry">
         <input
           className="Line-next-line"
           value={this.state.nextLine}
           onChange={this.editNextLine}
           placeholder="Suggest another next line..."
         />
-        <button onClick={this.submitNextLine}>Submit</button>
+        <button className="submit" onClick={this.submitNextLine}>Submit</button>
+</div>
       </div>
     )
   }

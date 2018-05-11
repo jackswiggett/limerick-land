@@ -51,15 +51,18 @@ class Home extends Component {
   render() {
     return (
       <div className="Home">
+        
         <h3>
           Enter a first line for a limerick:
         </h3>
-        <input
-          className="Home-first-line"
-          value={this.state.firstLine}
-          onChange={this.editFirstLine}
-        />
-        <button onClick={this.submitFirstLine}>Submit First Line</button>
+        <div className="entry">
+            <input
+              className="Home-first-line"
+              value={this.state.firstLine}
+              onChange={this.editFirstLine}
+            />
+            <button className="submit" onClick={this.submitFirstLine}>Submit First Line</button>
+        </div>
         <h3>Choose a first line:</h3>
         {this.state.firstLines.map(firstLine => (
           <Link

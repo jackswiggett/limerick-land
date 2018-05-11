@@ -1,3 +1,33 @@
 .Home-first-line {
-  width: 300px;
+    width: 270px;
+/*    margin-right: 30px;*/
+    height: 20px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    font-size: 12px;
+    padding-left: 6px;
+}
+
+.submit {
+    background: #F1F1F1;
+    height: 32px;
+}
+
+.entry {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.submit:hover {
+    background: #DDD;
+    cursor: pointer;
+}
+
+.Home-rules {
+    font-size: 1em;
+}
+
+.Home {
+    height: 100%;
 }
