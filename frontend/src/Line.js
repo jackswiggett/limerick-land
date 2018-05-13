@@ -4,11 +4,6 @@ import { Link } from 'react-router-dom';
 import './Line.css';
 import { API_URL } from './constants';
 
-
-
-
-
-
  async function loadData(url) {
   var result =  await axios.get(url);
   return result.data;
@@ -44,7 +39,8 @@ var word;
 var split;
 
 switch (poem.length) {
-    case 1,4:
+    case 1:
+    case 4:
         if (await handle_cases(split, word,
             all_rhymes, url, 0, poem, nextLine) === 0)
             return 0;
@@ -54,12 +50,7 @@ switch (poem.length) {
             all_rhymes, url, 2, poem, nextLine) === 0)
             return 0;
         break;
-    /*case 4:
-        if (await handle_cases(split, word,
-            all_rhymes, url, 0, poem, nextLine) === 0)
-            return 0;
-        break;
-    */
+    default:
     }
     return 1;
 }
