@@ -4,6 +4,66 @@ import { Link } from 'react-router-dom';
 import './Line.css';
 import { API_URL } from './constants';
 
+
+
+
+
+
+ async function loadData(url) {
+  var result =  await axios.get(url);
+  return result.data;
+}
+
+
+function getCurrentLimerick(state){
+  var lines =[];
+    for (var x = 0; x < state.ancestors.length;x++){
+    lines.push(state.ancestors[x].text);
+    }
+    lines.push(state.text);
+    return lines;
+  }
+
+async function handle_cases(split, word, all_rhymes, url, index, poem, nextLine) {
+    split = poem[index].split(" ");
+    word = split[split.length-1];
+    all_rhymes = await loadData(url+word);
+    var rhymes_arr = [];
+    for (var x = 0; x < all_rhymes.length; x++){
+        rhymes_arr.push(all_rhymes[x]['word']);
+    }
+    console.log(rhymes_arr);
+    if (rhymes_arr.indexOf(nextLine) <0)
+        return 0;
+}
+
+async function rhymeCheck(poem, nextLine){ //returns 0 if word does not rhyme
+var url = 'https://api.datamuse.com/words?rel_rhy=';
+var all_rhymes;
+var word;
+var split;
+
+switch (poem.length) {
+    case 1,4:
+        if (await handle_cases(split, word,
+            all_rhymes, url, 0, poem, nextLine) === 0)
+            return 0;
+        break;
+    case 3:
+        if (await handle_cases(split, word,
+            all_rhymes, url, 2, poem, nextLine) === 0)
+            return 0;
+        break;
+    /*case 4:
+        if (await handle_cases(split, word,
+            all_rhymes, url, 0, poem, nextLine) === 0)
+            return 0;
+        break;
+    */
+    }
+    return 1;
+}
+
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -46,11 +106,14 @@ class Home extends Component {
       nextLine: event.target.value,
     });
   }
-  
-  submitNextLine() {
+
+  async submitNextLine() {
     // don't submit an empty string as the next line
     if (this.state.nextLine.length === 0) return;
-
+    var poem = getCurrentLimerick(this.state);
+    var rhymeScore = await rhymeCheck(poem, this.state.nextLine);
+    console.log("Answer to the rhyme check: "+rhymeScore);
+    if (rhymeScore === 0) return;
     axios.post(`${API_URL}/line`, {
       text: this.state.nextLine,
       parentId: this.props.match.params.lineId,
