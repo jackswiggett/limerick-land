@@ -14,7 +14,7 @@ import { API_URL } from './constants';
   return result.data;
 }
 
-
+//Returns array of current limerick lines
 function getCurrentLimerick(state){
   var lines =[];
     for (var x = 0; x < state.ancestors.length;x++){
