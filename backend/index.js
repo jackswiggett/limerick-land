@@ -7,7 +7,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-mongoose.connect('mongodb://localhost/limerick-land');
+/* If deployed in production get the URI of the mLab database. Otherwise,
+ * use the local database. */
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost/limerick-land';
+mongoose.connect(MONGODB_URI);
 
 // create a new first line
 app.post('/firstline', async (req, res) => {
@@ -42,7 +45,7 @@ app.post('/line', async (req, res) => {
   await parent.save();
 
   res.end('Success');
-})
+});
 
 // get a line along with its ancestors and children
 app.get('/line', async (req, res) => {
@@ -79,6 +82,8 @@ app.get('/line', async (req, res) => {
     children,
     ancestors,
   });
-})
+});
 
-app.listen(3100, () => console.log('limerick-land-server listening on port 3100'));
+const port = process.env.PORT || 3100;
+
+app.listen(port, () => console.log(`limerick-land-server listening on port ${port}`));
