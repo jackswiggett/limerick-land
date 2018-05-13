@@ -63,6 +63,7 @@ class Home extends Component {
       ancestors: [],
       children: [],
       nextLine: '',
+      rhymeWorks: 'Input must follow the rhyme scheme',
     };
     
     this.editNextLine = this.editNextLine.bind(this);
@@ -104,7 +105,25 @@ class Home extends Component {
     var poem = getCurrentLimerick(this.state);
     var rhymeScore = await rhymeCheck(poem, this.state.nextLine);
     console.log("Answer to the rhyme check: "+rhymeScore);
-    if (rhymeScore === 0) return;
+    if (rhymeScore === 0){
+    var check_word = '';
+    if (poem.length == 1 || poem.length == 4){
+    var split = poem[0].split(" ");
+    check_word = split[split.length-1];
+    }
+    else{
+    var split = poem[2].split(" ");
+    check_word = split[split.length-1];
+    }
+     this.setState({
+      rhymeWorks: this.state.nextLine+ " does not rhyme with "+check_word,
+    });
+    return;
+    }
+    this.setState({
+      rhymeWorks: "New Line accepted!",
+    });
+    
     axios.post(`${API_URL}/line`, {
       text: this.state.nextLine,
       parentId: this.props.match.params.lineId,
@@ -145,7 +164,11 @@ class Home extends Component {
           placeholder="Suggest another next line..."
         />
         <button className="submit" onClick={this.submitNextLine}>Submit</button>
+        
 </div>
+<div className="checkBoxHolder">
+            {this.state.rhymeWorks}
+        </div>
       </div>
     )
   }
