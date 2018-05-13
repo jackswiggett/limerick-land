@@ -130,7 +130,6 @@ class Home extends Component {
   
   renderNextLine() {
     if (this.state.ancestors.length === 4) {
-      // this limerick is complete
       return null;
     }
 
