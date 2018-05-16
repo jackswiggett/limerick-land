@@ -24,19 +24,21 @@ function getCurrentLimerick(state){
 async function handle_cases(split, word, all_rhymes, url, index, poem, nextLine) {
     split = poem[index].split(" ");
     word = split[split.length-1];
-    all_rhymes = await loadData(url+word);
-    var rhymes_arr = [];
-    for (var x = 0; x < all_rhymes.length; x++){
-        rhymes_arr.push(all_rhymes[x]['word']);
+    var nextLineArr = nextLine.split(" ");
+    var nextLineWord = nextLineArr[nextLineArr.length-1];
+    var param = 'rel_rhy=';
+    console.log(url+param+word+'&'+param+nextLineWord);
+    all_rhymes = await loadData(url+param+word+'&'+param+nextLineWord);
+    console.log(all_rhymes);
+    if (all_rhymes.length > 0){
+    return 1;
     }
-    console.log(rhymes_arr);
-    if (rhymes_arr.indexOf(nextLine) <0)
-        return 0;
+    return 0;
 }
 
 // Returns 0 if word does not fit in rhyme scheme
 async function rhymeCheck(poem, nextLine){
-    var url = 'https://api.datamuse.com/words?rel_rhy=';
+    var url = 'https://api.datamuse.com/words?';
     var all_rhymes;
     var word;
     var split;
