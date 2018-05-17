@@ -1,73 +1,54 @@
 import axios from 'axios';
 import React, { Component } from 'react';
+import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import './Line.css';
 import { API_URL } from './constants';
 
 // Loads data from the API for rhyme checking
 async function loadData(url) {
-    var result =  await axios.get(url);
+    var result = await axios.get(url);
     return result.data;
 }
 
-//Returns array of current limerick lines
-function getCurrentLimerick(state){
-    var lines =[];
-    for (var x = 0; x < state.ancestors.length;x++){
-        lines.push(state.ancestors[x].text);
+// Gets the last word of a line in a poem
+const getLastWordOfLine = (line) => {
+    const lineWithoutPunctuation = line.replace(/[.,!;:()?]/g, '');
+    const allWords = lineWithoutPunctuation.split(' ');
+    return allWords[allWords.length - 1];
+};
+
+// Throws an error if word1 and word2 do not rhyme
+async function checkRhyme(word1, word2) {
+    const apiUrl = 'https://api.datamuse.com/words?';
+    const param = 'rel_rhy=';
+    const matchingWords = await loadData(apiUrl + param + word1 + '&' + param + word2);
+    if (matchingWords.length === 0) {
+        throw new Error(`'${word1}' does not rhyme with '${word2}'`);
     }
-    lines.push(state.text);
-    return lines;
 }
 
-// Returns 0 if word does not fit in the rhyme scheme
-async function handle_cases(split, word, all_rhymes, url, index, poem, nextLine) {
-    split = poem[index].split(" ");
-    word = split[split.length-1];
-    var nextLineArr = nextLine.split(" ");
-    var nextLineWord = nextLineArr[nextLineArr.length-1];
-    var param = 'rel_rhy=';
-    console.log(url+param+word+'&'+param+nextLineWord);
-    all_rhymes = await loadData(url+param+word+'&'+param+nextLineWord);
-    console.log(all_rhymes);
-    if (all_rhymes.length > 0){
-    return 1;
-    }
-    return 0;
-}
+// Throws an error if the word does not fit in the rhyme scheme
+async function validateNextLine(poem, nextLine){
+    const lastWord = getLastWordOfLine(nextLine);
 
-// Returns 0 if word does not fit in rhyme scheme
-async function rhymeCheck(poem, nextLine){
-    var url = 'https://api.datamuse.com/words?';
-    var all_rhymes;
-    var word;
-    var split;
-    switch (poem.length) {
-        case 1:
-        case 4:
-            if (await handle_cases(split, word,
-                                   all_rhymes, url, 0, poem, nextLine) === 0)
-                return 0;
-            break;
-        case 3:
-            if (await handle_cases(split, word,
-                                   all_rhymes, url, 2, poem, nextLine) === 0)
-                return 0;
-            break;
-        default:
+    if (poem.length === 1 || poem.length === 4) {
+        // last word must rhyme with the first line
+        await checkRhyme(lastWord, getLastWordOfLine(poem[0]));
+    } else if (poem.length === 3) {
+        // last word must rhyme with third line
+        await checkRhyme(lastWord, getLastWordOfLine(poem[2]));
     }
-    return 1;
 }
 
 class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-        text: '',
-        ancestors: [],
-        children: [],
-        nextLine: '',
-        rhymeWorks: '',
+            text: '',
+            ancestors: [],
+            children: [],
+            nextLine: '',
         };
         
         this.editNextLine = this.editNextLine.bind(this);
@@ -102,33 +83,22 @@ class Home extends Component {
                       nextLine: event.target.value,
                       });
     }
+
+    // Get array of lines in the current limerick
+    getCurrentLimerick() {
+        const lines = this.state.ancestors.map(ancestor => ancestor.text);
+        lines.push(this.state.text);
+        return lines;
+    }
     
     async submitNextLine() {
         // don't submit an empty string as the next line
         if (this.state.nextLine.length === 0) return;
-        var poem = getCurrentLimerick(this.state);
-        var rhymeScore = await rhymeCheck(poem, this.state.nextLine);
-        console.log("Answer to the rhyme check: "+rhymeScore);
-        if (rhymeScore === 0){
-            var check_word = '';
-            if (poem.length == 1 || poem.length == 4){
-                var split = poem[0].split(" ");
-                check_word = split[split.length-1];
-            }
-            else{
-                var split = poem[2].split(" ");
-                check_word = split[split.length-1];
-            }
-            this.setState({
-                          rhymeWorks: this.state.nextLine+ " does not rhyme with "+check_word,
-                          });
-            return;
-        }
-        this.setState({
-                      rhymeWorks: "New Line accepted!",
-                      });
-        
-        axios.post(`${API_URL}/line`, {
+
+        var poem = this.getCurrentLimerick();
+        try {
+            await validateNextLine(poem, this.state.nextLine);
+            axios.post(`${API_URL}/line`, {
                    text: this.state.nextLine,
                    parentId: this.props.match.params.lineId,
                    }).then(() => {
@@ -136,7 +106,11 @@ class Home extends Component {
                                          nextLine: '',
                                          });
                            this.fetchLine();
+                           toast.success('Line submitted successfully!');
                            });
+        } catch (e) {
+            toast.error(e.message || 'An error occurred!');
+        }
     }
     
     renderLineLink(line) {
@@ -169,9 +143,6 @@ class Home extends Component {
                 />
                 <button className="submit" onClick={this.submitNextLine}>Submit</button>
                 
-                </div>
-                <div className="checkBoxHolder">
-                {this.state.rhymeWorks}
                 </div>
                 </div>
                 )
