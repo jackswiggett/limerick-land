@@ -132,14 +132,16 @@ class Home extends Component {
         
         return (
                 <div>
-                <h3>Select the next line:</h3>
+                {this.state.children.length > 0
+                    ? <h3>Select the next line:</h3>
+                    : null}
                 {this.state.children.map(this.renderLineLink)}
                 <div className="entry">
                 <input
                 className="Line-next-line"
                 value={this.state.nextLine}
                 onChange={this.editNextLine}
-                placeholder="Suggest another next line..."
+                placeholder="Suggest a line that could come next..."
                 />
                 <button className="submit" onClick={this.submitNextLine}>Submit</button>
                 
@@ -151,8 +153,10 @@ class Home extends Component {
     render() {
         return (
                 <div className="Line">
-                {this.state.ancestors.map(this.renderLineLink)}
-                <p><strong>{this.state.text}</strong></p>
+                <div className="Line-ancestors">
+                  {this.state.ancestors.map(this.renderLineLink)}
+                  <span className="line-link no-hover">{this.state.text}</span>
+                </div>
                 {this.renderNextLine()}
                 </div>
                 );

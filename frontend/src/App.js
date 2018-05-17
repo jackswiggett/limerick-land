@@ -18,9 +18,11 @@ class App extends Component {
       <Router>
         <div className="App">
           <ToastContainer />
-          <header className="App-header">
-            <img className="header-img" src={headerImg} height='100%' width='100%' alt="limerick header with kitty on tree branch"></img>
-          </header>
+          <a href="/">
+            <header className="App-header">
+              <img className="header-img" src={headerImg} height='100%' width='100%' alt="limerick header with kitty on tree branch"></img>
+            </header>
+          </a>
           <div className="content">
             <img className="rules-img" src={rulesImg} alt="limerick header with kitty on tree branch"/>
             <Route exact path="/" component={Home} />
