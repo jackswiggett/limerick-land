@@ -29,3 +29,12 @@
     font-family: 'Kavivanar', cursive;
     font-size: 1.2em;
 }
+
+.Line-btn-back {
+    border: none;
+    font-size: 1rem;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 4px;
+    cursor: pointer;
+}
