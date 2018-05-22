@@ -9,9 +9,10 @@ const schema = new mongoose.Schema({
     type: [mongoose.Schema.Types.ObjectId], // IDs of child lines
     index: true,
   },
-  isFirstLine: {
-    type: Boolean,
-    default: false,
+  index: { // 0, 1, 2, 3, or 4
+    type: Number,
+    min: 0,
+    max: 4,
     index: true,
   },
 },

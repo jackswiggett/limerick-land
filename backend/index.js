@@ -16,7 +16,7 @@ mongoose.connect(MONGODB_URI);
 app.post('/firstline', async (req, res) => {
   const line = new Line({
     text: req.body.text,
-    isFirstLine: true,
+    index: 0,
   });
   await line.save();
   res.end();
@@ -25,7 +25,7 @@ app.post('/firstline', async (req, res) => {
 // get all existing first lines
 app.get('/firstline', async (req, res) => {
   const firstLines = await Line
-    .find({ isFirstLine: true })
+    .find({ index: 0 })
     .select('text')
     .sort({ createdAt: -1 }) // show recently added lines first
     .exec();
@@ -34,13 +34,18 @@ app.get('/firstline', async (req, res) => {
 
 // create a new line that is a child of an existing line
 app.post('/line', async (req, res) => {
+  const parent = await Line.findById(req.body.parentId).exec();
+  if (parent.index === 4) {
+    response.status(403).end('Cannot have a limerick with more than 5 lines.');
+  }
+
   const line = new Line({
     text: req.body.text,
-    isFirstLine: false,
+    index: parent.index + 1,
   });
   await line.save();
 
-  const parent = await Line.findById(req.body.parentId).exec();
+  
   parent.children.push(line._id);
   await parent.save();
 
@@ -67,10 +72,10 @@ app.get('/line', async (req, res) => {
 
   // Get all the ancestors of this line, up until we reach the first line
   const ancestors = [line];
-  while (!ancestors[0].isFirstLine) {
+  while (ancestors[0].index !== 0) {
     const parent = await Line
       .findOne({ children: ancestors[0]._id })
-      .select('text isFirstLine')
+      .select('text index')
       .exec();
     ancestors.splice(0, 0, parent);
   }
