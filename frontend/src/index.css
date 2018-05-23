@@ -18,3 +18,8 @@ body {
 .line-link:hover {
   background: #EEE;
 }
+
+.line-link.no-hover:hover {
+  background: none;
+  cursor: default;
+}

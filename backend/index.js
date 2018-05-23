@@ -1,19 +1,28 @@
 const cors = require('cors');
 const express = require('express');
+const boolParser = require('express-query-boolean');
 const mongoose = require('mongoose');
-const Line = require('./models/Line');
+const ValidatedLine = require('./models/line').ValidatedLine;
+const UnvalidatedLine = require('./models/line').UnvalidatedLine;
 
 const app = express();
 app.use(express.json());
+app.use(boolParser());
 app.use(cors());
 
-mongoose.connect('mongodb://localhost/limerick-land');
+/* If deployed in production get the URI of the mLab database. Otherwise,
+ * use the local database. */
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost/limerick-land';
+mongoose.connect(MONGODB_URI);
 
 // create a new first line
 app.post('/firstline', async (req, res) => {
+  const Line = req.body.validateLines ? ValidatedLine : UnvalidatedLine;
+
   const line = new Line({
     text: req.body.text,
-    isFirstLine: true,
+    index: 0,
+    userId: req.body.userId,
   });
   await line.save();
   res.end();
@@ -21,8 +30,10 @@ app.post('/firstline', async (req, res) => {
 
 // get all existing first lines
 app.get('/firstline', async (req, res) => {
+  const Line = req.query.validateLines ? ValidatedLine : UnvalidatedLine;
+
   const firstLines = await Line
-    .find({ isFirstLine: true })
+    .find({ index: 0 })
     .select('text')
     .sort({ createdAt: -1 }) // show recently added lines first
     .exec();
@@ -31,22 +42,30 @@ app.get('/firstline', async (req, res) => {
 
 // create a new line that is a child of an existing line
 app.post('/line', async (req, res) => {
-  const line = new Line({
-    text: req.body.text,
-    isFirstLine: false,
-    isLastLine: req.body.isLastLine,
-  });
-  await line.save();
+  const Line = req.body.validateLines ? ValidatedLine : UnvalidatedLine;
 
   const parent = await Line.findById(req.body.parentId).exec();
+  if (parent.index === 4) {
+    response.status(403).end('Cannot have a limerick with more than 5 lines.');
+  }
+
+  const line = new Line({
+    text: req.body.text,
+    index: parent.index + 1,
+    userId: req.body.userId,
+  });
+  await line.save();
+  
   parent.children.push(line._id);
   await parent.save();
 
   res.end('Success');
-})
+});
 
 // get a line along with its ancestors and children
 app.get('/line', async (req, res) => {
+  const Line = req.query.validateLines ? ValidatedLine : UnvalidatedLine;
+
   const line = await Line.findById(req.query.lineId).exec();
 
   /*
@@ -65,10 +84,10 @@ app.get('/line', async (req, res) => {
 
   // Get all the ancestors of this line, up until we reach the first line
   const ancestors = [line];
-  while (!ancestors[0].isFirstLine) {
+  while (ancestors[0].index !== 0) {
     const parent = await Line
       .findOne({ children: ancestors[0]._id })
-      .select('text isFirstLine')
+      .select('text index')
       .exec();
     ancestors.splice(0, 0, parent);
   }
@@ -82,31 +101,33 @@ app.get('/line', async (req, res) => {
   });
 })
     
-app.get('/randpoem', async (req, res) => {
-//  const line = await Line.findById(req.query.lineId).exec();
-//  const line = null;
-  
-  const lastLines = await Line.find({ isLastLine: true }).exec();
-  if (lastLines.length === 0) return res.json({});
-  const idx = Math.floor((Math.random() * lastLines.length));
-  const line = lastLines[idx];
+//app.get('/randpoem', async (req, res) => {
+////  const line = await Line.findById(req.query.lineId).exec();
+////  const line = null;
+//  
+//  const lastLines = await Line.find({ isLastLine: true }).exec();
+//  if (lastLines.length === 0) return res.json({});
+//  const idx = Math.floor((Math.random() * lastLines.length));
+//  const line = lastLines[idx];
+//
+//  // Get all the ancestors of this line, up until we reach the first line
+//  const ancestors = [line];
+//  while (!ancestors[0].isFirstLine) {
+//    const parent = await Line
+//      .findOne({ children: ancestors[0]._id })
+//      .select('text isFirstLine')
+//      .exec();
+//    ancestors.splice(0, 0, parent);
+//  }
+//
+//  ancestors.pop(); // remove this line
+//  
+//  res.json({
+//    ...line.toObject(),
+//    ancestors,
+//  });
+//})
 
-  // Get all the ancestors of this line, up until we reach the first line
-  const ancestors = [line];
-  while (!ancestors[0].isFirstLine) {
-    const parent = await Line
-      .findOne({ children: ancestors[0]._id })
-      .select('text isFirstLine')
-      .exec();
-    ancestors.splice(0, 0, parent);
-  }
+const port = process.env.PORT || 3100;
 
-  ancestors.pop(); // remove this line
-  
-  res.json({
-    ...line.toObject(),
-    ancestors,
-  });
-})
-
-app.listen(3100, () => console.log('limerick-land-server listening on port 3100'));
+app.listen(port, () => console.log(`limerick-land-server listening on port ${port}`));
