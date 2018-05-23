@@ -33,6 +33,11 @@ async function checkRhyme(word1, word2) {
 
 // Throws an error if the word does not fit in the rhyme scheme
 async function validateNextLine(poem, nextLine) {
+    if (!validateLines) {
+        // nothing to be done
+        return;
+    }
+
     const lastWord = getLastWordOfLine(nextLine);
 
     if (poem.length === 1 || poem.length === 4) {
