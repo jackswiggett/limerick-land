@@ -11,6 +11,7 @@ html {
 /*  background-color: #222;*/
   height: 150px;
     width: 100%;
+    margin-bottom: 30px;
 /*  padding: 20px;*/
 /*  color: white;*/
 }
@@ -23,13 +24,27 @@ html {
     display: flex;
     width: 100%;
     flex-direction: row;
-    justify-content: flex-start;
-    margin-top: 75px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .rules-img {
-    width: 50%;
-    height: 50%;
-    margin-right: 100px;
-    margin-left: 50px;
+    max-width: 500px;
+    max-height: 148px;
+    width: auto;
+    height: auto;
+    margin-right: 30px;
+    margin-left: 30px;
+    margin-top: 40px;
+}
+
+@media (max-width: 550px) {
+    .rules-img {
+        max-width: 300px;
+        max-height: 89px;
+    }
+
+    .App-header {
+      height: 50px;
+    }
 }
