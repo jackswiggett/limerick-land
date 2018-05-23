@@ -9,8 +9,20 @@
     height: 32px;
 }
 
+.green {
+    color: green;
+    padding-top: 8px;
+    padding-bottom: 4px;
+}
+
+.red {
+    color: red;
+    padding-top: 8px;
+    padding-bottom: 4px;
+}
+
 .submit {
-    background: #F1F1F1;
+    background: #f1f1f1;
     height: 32px;
     margin-top: 10px;
 }
@@ -22,12 +34,12 @@
 }
 
 .submit:hover {
-    background: #DDD;
+    background: #ddd;
     cursor: pointer;
 }
 
 .Line-ancestors .line-link {
-    font-family: 'Kavivanar', cursive;
+    font-family: "Kavivanar", cursive;
     font-size: 1.2em;
 }
 

@@ -49,6 +49,20 @@ async function validateNextLine(poem, nextLine) {
     }
 }
 
+async function checkSyllables(poem, nextLine){
+var syllable = require('syllable');
+	if (poem.length === 0 || poem.length === 1  || poem.length === 4){
+		if (syllable(nextLine) !== 8 &&  syllable(nextLine) !== 9){
+			throw new Error(`line does not have 8 or 9 syllables`);
+		}
+	}
+	if (poem.length === 2 || poem.length === 3){
+		if (syllable(nextLine) !== 5 &&  syllable(nextLine) !== 6){
+			throw new Error(`line does not have 5 or 6 syllables`);
+		}
+	}
+}
+
 class Home extends Component {
     constructor(props) {
         super(props);
@@ -56,7 +70,10 @@ class Home extends Component {
             text: "",
             ancestors: [],
             children: [],
-            nextLine: ""
+            nextLine: "",
+            syllableCount:0, 
+            min_syll: 5,
+            max_syll: 6
         };
 
         this.editNextLine = this.editNextLine.bind(this);
@@ -88,6 +105,7 @@ class Home extends Component {
     componentDidUpdate(prevProps) {
         if (prevProps.match.params.lineId !== this.props.match.params.lineId) {
             this.fetchLine();
+            
         }
     }
   
@@ -95,6 +113,18 @@ class Home extends Component {
     this.setState({
       nextLine: event.target.value,
     });
+    var poem = this.getCurrentLimerick();
+    var syllable = require('syllable');
+    this.state.syllableCount = syllable(event.target.value);
+    if (poem.length == 0 || poem.length == 1 || poem.length == 4){
+    this.state.min_syll  = 8;
+    this.state.max_syll = 9;
+		}
+		else 
+		{
+		this.state.min_syll = 5;
+		this.state.max_syll = 6;
+		}
   }
 
     // Get array of lines in the current limerick
@@ -142,7 +172,6 @@ class Home extends Component {
         if (this.state.ancestors.length === 4) {
             return null;
         }
-
         return (
             <div>
                 {this.state.children.length > 0 ? (
@@ -159,6 +188,9 @@ class Home extends Component {
                     <button className="submit" onClick={this.submitNextLine}>
                         Submit
                     </button>
+                </div>
+                <div className={(this.state.syllableCount === this.state.min_syll || this.state.syllableCount === this.state.max_syll) ? "green" : "red" } >
+                Syllable Count: {this.state.syllableCount}
                 </div>
             </div>
         );
