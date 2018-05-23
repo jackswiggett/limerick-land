@@ -41,6 +41,11 @@ html {
     cursor: pointer;
 }
 
+.Line-ancestors {
+    font-family: 'Kavivanar', cursive;
+    font-size: 1.2em;
+}
+
 .rules-img {
     max-width: 500px;
     max-height: 148px;

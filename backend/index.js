@@ -101,32 +101,26 @@ app.get('/line', async (req, res) => {
   });
 })
     
-//app.get('/randpoem', async (req, res) => {
-////  const line = await Line.findById(req.query.lineId).exec();
-////  const line = null;
-//  
-//  const lastLines = await Line.find({ isLastLine: true }).exec();
-//  if (lastLines.length === 0) return res.json({});
-//  const idx = Math.floor((Math.random() * lastLines.length));
-//  const line = lastLines[idx];
-//
-//  // Get all the ancestors of this line, up until we reach the first line
-//  const ancestors = [line];
-//  while (!ancestors[0].isFirstLine) {
-//    const parent = await Line
-//      .findOne({ children: ancestors[0]._id })
-//      .select('text isFirstLine')
-//      .exec();
-//    ancestors.splice(0, 0, parent);
-//  }
-//
-//  ancestors.pop(); // remove this line
-//  
-//  res.json({
-//    ...line.toObject(),
-//    ancestors,
-//  });
-//})
+app.get('/randpoem', async (req, res) => {
+  const Line = ValidatedLine;
+  const lastLines = await Line.find({ index: 4 }).exec();
+  if (lastLines.length === 0) return res.json({});
+  const idx = Math.floor((Math.random() * lastLines.length));
+  const line = lastLines[idx];
+  // Get all the ancestors of this line, up until we reach the first line
+  const ancestors = [line];
+  while (ancestors[0].index !== 0) {
+    const parent = await Line
+      .findOne({ children: ancestors[0]._id })
+      .select('text index')
+      .exec();
+    ancestors.splice(0, 0, parent);
+  }
+  
+  res.json({
+    ancestors,
+  });
+})
 
 const port = process.env.PORT || 3100;
 
