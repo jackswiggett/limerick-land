@@ -27,9 +27,27 @@ html {
     margin-top: 75px;
 }
 
-.rules-img {
+.rules-img-container {
     width: 50%;
     height: 50%;
     margin-right: 100px;
     margin-left: 50px;
+}
+
+.rules-img {
+    width: 100%;
+    height: 100%;
+}
+
+.submit-random {
+    background: #F1F1F1;
+    font-weight: bold;
+    margin-top: 10px;
+    font-size: 20px;
+    padding:12px;
+}
+
+.submit-random:hover {
+    background: #DDD;
+    cursor: pointer;
 }

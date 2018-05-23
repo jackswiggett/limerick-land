@@ -4,12 +4,7 @@ import { Link } from 'react-router-dom';
 import './Line.css';
 import { API_URL } from './constants';
 
-
-
-
-
-
- async function loadData(url) {
+async function loadData(url) {
   var result =  await axios.get(url);
   return result.data;
 }
@@ -32,9 +27,10 @@ async function handle_cases(split, word, all_rhymes, url, index, poem, nextLine)
     for (var x = 0; x < all_rhymes.length; x++){
         rhymes_arr.push(all_rhymes[x]['word']);
     }
-    console.log(rhymes_arr);
-    if (rhymes_arr.indexOf(nextLine) <0)
-        return 0;
+    var nextLineSplit = nextLine.split(" ");
+    console.log(nextLineSplit[nextLineSplit.length - 1]);
+    if (rhymes_arr.indexOf(nextLineSplit[nextLineSplit.length - 1]) < 0) return 0;
+    console.log("fam I'm not less than 0")
 }
 
 async function rhymeCheck(poem, nextLine){ //returns 0 if word does not rhyme
@@ -114,10 +110,13 @@ class Home extends Component {
     var rhymeScore = await rhymeCheck(poem, this.state.nextLine);
     console.log("Answer to the rhyme check: "+rhymeScore);
     if (rhymeScore === 0) return;
-    axios.post(`${API_URL}/line`, {
-      text: this.state.nextLine,
-      parentId: this.props.match.params.lineId,
-    }).then(() => {
+    var data = {
+          text: this.state.nextLine,
+          parentId: this.props.match.params.lineId,
+          isLastLine: false
+        };
+    if (this.state.ancestors.length === 3) data.isLastLine = true;
+    axios.post(`${API_URL}/line`,data).then(() => {
       this.setState({
         nextLine: '',
       });
