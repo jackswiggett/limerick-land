@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import "./Home.css";
 import { API_URL } from "./constants";
+import { validateLines, userId } from "./userInfo";
 
 class Home extends Component {
   constructor(props) {
@@ -17,11 +18,17 @@ class Home extends Component {
   }
 
   fetchFirstLines() {
-    axios.get(`${API_URL}/firstline`).then(response => {
-      this.setState({
-        firstLines: response.data
+    axios
+      .get(`${API_URL}/firstline`, {
+        params: {
+          validateLines
+        }
+      })
+      .then(response => {
+        this.setState({
+          firstLines: response.data
+        });
       });
-    });
   }
 
   componentDidMount() {
@@ -40,7 +47,9 @@ class Home extends Component {
 
     axios
       .post(`${API_URL}/firstline`, {
-        text: this.state.firstLine
+        text: this.state.firstLine,
+        userId,
+        validateLines
       })
       .then(() => {
         this.setState({

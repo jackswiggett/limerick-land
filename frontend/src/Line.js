@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import "./Line.css";
 import { API_URL } from "./constants";
+import { validateLines, userId } from "./userInfo";
 
 // Loads data from the API for rhyme checking
 async function loadData(url) {
@@ -61,7 +62,10 @@ class Home extends Component {
     fetchLine() {
         axios
             .get(`${API_URL}/line`, {
-                params: { lineId: this.props.match.params.lineId }
+                params: {
+                    lineId: this.props.match.params.lineId,
+                    validateLines,
+                }
             })
             .then(response => {
                 this.setState({
@@ -105,7 +109,9 @@ class Home extends Component {
             axios
                 .post(`${API_URL}/line`, {
                     text: this.state.nextLine,
-                    parentId: this.props.match.params.lineId
+                    parentId: this.props.match.params.lineId,
+                    userId,
+                    validateLines
                 })
                 .then(() => {
                     this.setState({

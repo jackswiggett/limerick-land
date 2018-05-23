@@ -1,10 +1,13 @@
 const cors = require('cors');
 const express = require('express');
+const boolParser = require('express-query-boolean');
 const mongoose = require('mongoose');
-const Line = require('./models/Line');
+const ValidatedLine = require('./models/line').ValidatedLine;
+const UnvalidatedLine = require('./models/line').UnvalidatedLine;
 
 const app = express();
 app.use(express.json());
+app.use(boolParser());
 app.use(cors());
 
 /* If deployed in production get the URI of the mLab database. Otherwise,
@@ -14,9 +17,12 @@ mongoose.connect(MONGODB_URI);
 
 // create a new first line
 app.post('/firstline', async (req, res) => {
+  const Line = req.body.validateLines ? ValidatedLine : UnvalidatedLine;
+
   const line = new Line({
     text: req.body.text,
     index: 0,
+    userId: req.body.userId,
   });
   await line.save();
   res.end();
@@ -24,6 +30,8 @@ app.post('/firstline', async (req, res) => {
 
 // get all existing first lines
 app.get('/firstline', async (req, res) => {
+  const Line = req.query.validateLines ? ValidatedLine : UnvalidatedLine;
+
   const firstLines = await Line
     .find({ index: 0 })
     .select('text')
@@ -34,6 +42,8 @@ app.get('/firstline', async (req, res) => {
 
 // create a new line that is a child of an existing line
 app.post('/line', async (req, res) => {
+  const Line = req.body.validateLines ? ValidatedLine : UnvalidatedLine;
+
   const parent = await Line.findById(req.body.parentId).exec();
   if (parent.index === 4) {
     response.status(403).end('Cannot have a limerick with more than 5 lines.');
@@ -42,9 +52,9 @@ app.post('/line', async (req, res) => {
   const line = new Line({
     text: req.body.text,
     index: parent.index + 1,
+    userId: req.body.userId,
   });
   await line.save();
-
   
   parent.children.push(line._id);
   await parent.save();
@@ -54,6 +64,8 @@ app.post('/line', async (req, res) => {
 
 // get a line along with its ancestors and children
 app.get('/line', async (req, res) => {
+  const Line = req.query.validateLines ? ValidatedLine : UnvalidatedLine;
+
   const line = await Line.findById(req.query.lineId).exec();
 
   /*
