@@ -10,7 +10,8 @@ class Home extends Component {
     super(props);
     this.state = {
       firstLine: "",
-      firstLines: []
+      firstLines: [],
+      syllableCount: 0
     };
 
     this.editFirstLine = this.editFirstLine.bind(this);
@@ -39,6 +40,8 @@ class Home extends Component {
     this.setState({
       firstLine: event.target.value
     });
+     var syllable = require('syllable');
+    this.state.syllableCount = syllable(event.target.value);
   }
 
   submitFirstLine() {
@@ -72,6 +75,9 @@ class Home extends Component {
           <button className="submit" onClick={this.submitFirstLine}>
             Submit
           </button>
+        </div>
+        <div className={(this.state.syllableCount === 8 || this.state.syllableCount === 9) ? "green" : "red" } >
+                Syllable Count: {this.state.syllableCount}
         </div>
         <h3>Or choose an existing one:</h3>
         {this.state.firstLines.map(firstLine => (
