@@ -11,7 +11,7 @@ import Home from "./Home";
 import { API_URL } from "./constants";
 import Line from "./Line";
 import { validateLines, userId } from "./userInfo";
-
+import ReactGA from 'react-ga'; // https://github.com/react-ga/react-ga
 
 class App extends Component {
   constructor(props) {
@@ -19,6 +19,10 @@ class App extends Component {
     this.state = {
       lineID: null
     };
+    // Add your tracking ID created from https://analytics.google.com/analytics/web/#home/
+    ReactGA.initialize('UA-119824484-1');
+    // This just needs to be called once since we have no routes in this case.
+    ReactGA.pageview(window.location.pathname);
   }
   
   componentWillMount() {
