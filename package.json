@@ -1,0 +1,13 @@
+{
+  "name": "limerick-land-root",
+  "version": "0.1.0",
+  "scripts": {
+    "postinstall": "npm install --prefix backend"
+  },
+  "engines": {
+    "node": "8.9.1"
+  },
+  "dependencies": {
+    "react-ga": "^2.5.2"
+  }
+}
