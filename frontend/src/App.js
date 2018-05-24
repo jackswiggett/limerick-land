@@ -6,6 +6,7 @@ import headerImg from "./header.png";
 import rulesImg from "./rules.png";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import "./App.css";
+import "./Line.css";
 import Home from "./Home";
 import { API_URL } from "./constants";
 import Line from "./Line";
@@ -16,8 +17,12 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      lines: []
+      lineID: null
     };
+  }
+  
+  componentWillMount() {
+    this.fetchRandomPoem();
   }
   
   fetchRandomPoem = () => {
@@ -28,9 +33,9 @@ class App extends Component {
                 }
             })
             .then(response => {
-                var result = response.data.ancestors.map(line => line.text);
+                var result = response.data.lineId;
                 this.setState({
-                    lines: result,
+                    lineID: result,
                 });
             });
   }
@@ -58,19 +63,16 @@ class App extends Component {
               alt="limerick header with kitty on tree branch"
             />
             <hr/>
-            <button className="submit-random" onClick={this.fetchRandomPoem}>Generate a random poem</button>
-            {this.state.lines.length === 5 && 
-              <div className="Line-ancestors">
-                <p> {this.state.lines[0]} </p>
-                <p> {this.state.lines[1]} </p>
-                <p> {this.state.lines[2]} </p>
-                <p> {this.state.lines[3]} </p>
-                <p> {this.state.lines[4]} </p>
-              </div>
-            }
           </div>
             <Route exact path="/" component={Home} />
-            <Route path="/line/:lineId" component={Line} />
+            <div className="random-container">
+              {this.state.lineID !== null && 
+                <Link className="randButton" to={`/line/${this.state.lineID}`}>
+                  <button className="submit-random" onClick={this.fetchRandomPoem}>Generate a limerick</button>
+                </Link>
+              }
+              <Route path="/line/:lineId" component={Line} />
+            </div>
           </div>
         </div>
       </Router>
