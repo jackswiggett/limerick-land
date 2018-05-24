@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { Component } from "react";
+import ReactGA from 'react-ga';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import headerImg from "./header.png";
@@ -19,6 +20,10 @@ class App extends Component {
       lineID: null,
       showHelp: true
     };
+    // Add your tracking ID created from https://analytics.google.com/analytics/web/#home/
+    ReactGA.initialize('UA-119824484-1');
+    // This just needs to be called once since we have no routes in this case.
+    ReactGA.pageview(window.location.pathname);
   }
 
   componentWillMount() {
