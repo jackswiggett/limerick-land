@@ -12,33 +12,34 @@ import { API_URL } from "./constants";
 import Line from "./Line";
 import { validateLines, userId } from "./userInfo";
 
-
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      lineID: null
+      lineID: null,
+      showHelp: true
     };
   }
-  
+
   componentWillMount() {
     this.fetchRandomPoem();
   }
-  
+
   fetchRandomPoem = () => {
     axios
-            .get(`${API_URL}/randpoem`, {
-                params: {
-                    validateLines,
-                }
-            })
-            .then(response => {
-                var result = response.data.lineId;
-                this.setState({
-                    lineID: result,
-                });
-            });
-  }
+      .get(`${API_URL}/randpoem`, {
+        params: {
+          validateLines
+        }
+      })
+      .then(response => {
+        var result = response.data.lineId;
+        this.setState({
+          lineID: result
+        });
+      });
+  };
+
   render() {
     return (
       <Router>
@@ -55,24 +56,39 @@ class App extends Component {
               />
             </header>
           </a>
-          <div className="content">
-          <div>
-            <img
-              className="rules-img"
-              src={rulesImg}
-              alt="limerick header with kitty on tree branch"
-            />
-            <hr/>
+          <div className="App-navbar">
+            <Link to={"/"}>Home</Link>
+            {this.state.lineID !== null ? (
+              <Link
+                onClick={this.fetchRandomPoem}
+                to={`/line/${this.state.lineID}`}
+              >
+                View Random Limerick
+              </Link>
+            ) : null}
           </div>
-            <Route exact path="/" component={Home} />
-            <div className="random-container">
-              {this.state.lineID !== null && 
-                <Link className="randButton" to={`/line/${this.state.lineID}`}>
-                  <button className="submit-random" onClick={this.fetchRandomPoem}>Generate a limerick</button>
-                </Link>
-              }
-              <Route path="/line/:lineId" component={Line} />
+          <div className="App-help-wrapper">
+            <div className="App-help">
+              <div style={{ display: this.state.showHelp ? "block" : "none" }}>
+                <img
+                  className="rules-img"
+                  src={rulesImg}
+                  alt="instructions for writing limericks"
+                />
+              </div>
+              <button
+                className="App-btn-help"
+                onClick={() =>
+                  this.setState({ showHelp: !this.state.showHelp })
+                }
+              >
+                {this.state.showHelp ? "Hide Help" : "Show Help"}
+              </button>
             </div>
+          </div>
+          <div className="content">
+            <Route exact path="/" component={Home} />
+            <Route path="/line/:lineId" component={Line} />
           </div>
         </div>
       </Router>
