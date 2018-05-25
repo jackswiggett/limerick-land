@@ -80,7 +80,10 @@ class App extends Component {
             <Link to={"/"}>Home</Link>
             {this.state.lineID !== null ? (
               <Link
-                onClick={this.fetchRandomPoem}
+                onClick={() => {
+                  this.fetchRandomPoem();
+                  this.setState({ showHelp: false });
+                }}
                 to={`/line/${this.state.lineID}`}
               >
                 View Random Limerick
@@ -90,6 +93,25 @@ class App extends Component {
           <div className="App-help-wrapper">
             <div className="App-help">
               <div style={{ display: this.state.showHelp ? "block" : "none" }}>
+                <div className="App-introduction">
+                  <h3>About Us</h3>
+                  <p>
+                    Limerick Land is a collaborative platform for building fun
+                    and creative limericks. You can browse, create your own, and
+                    build off of others. Feel free to use a{" "}
+                    <a target="_blank" href="https://www.rhymezone.com/">
+                      rhyming dictionary
+                    </a>{" "}
+                    or any other assistance in crafting your lines. If you have
+                    any feedback or questions, contact us at{" "}
+                    <a
+                      target="_blank"
+                      href="mailto:limericklandcontact@gmail.com"
+                    >
+                      limericklandcontact@gmail.com
+                    </a>.
+                  </p>
+                </div>
                 <img
                   className="rules-img"
                   src={rulesImg}

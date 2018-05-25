@@ -2,6 +2,10 @@ html {
   color: #2E2E2E;
 }
 
+body {
+    margin-bottom: 60px;
+}
+
 .App {
   text-align: center;
 }
@@ -36,7 +40,7 @@ html {
 }
 
 .App-help-wrapper {
-    max-width: 600px;
+    max-width: 700px;
     margin: auto;
 }
 
@@ -61,6 +65,20 @@ html {
 
 .App-title {
   font-size: 1.5em;
+}
+
+.App-introduction {
+    text-align: left;
+    margin: 0 20px;
+}
+
+.App-introduction h3 {
+    text-align: center;
+}
+
+.App-introduction a {
+    text-decoration: none;
+    color: blue;
 }
 
 .content {
