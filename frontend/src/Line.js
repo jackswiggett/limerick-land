@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { Component } from "react";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import syllable from "syllable";
 import "./Line.css";
 import { API_URL } from "./constants";
 import { validateLines, userId } from "./userInfo";
@@ -49,20 +50,6 @@ async function validateNextLine(poem, nextLine) {
     }
 }
 
-async function checkSyllables(poem, nextLine){
-var syllable = require('syllable');
-	if (poem.length === 0 || poem.length === 1  || poem.length === 4){
-		if (syllable(nextLine) !== 8 &&  syllable(nextLine) !== 9){
-			throw new Error(`line does not have 8 or 9 syllables`);
-		}
-	}
-	if (poem.length === 2 || poem.length === 3){
-		if (syllable(nextLine) !== 5 &&  syllable(nextLine) !== 6){
-			throw new Error(`line does not have 5 or 6 syllables`);
-		}
-	}
-}
-
 class Home extends Component {
     constructor(props) {
         super(props);
@@ -70,10 +57,7 @@ class Home extends Component {
             text: "",
             ancestors: [],
             children: [],
-            nextLine: "",
-            syllableCount:0, 
-            min_syll: 5,
-            max_syll: 6
+            nextLine: ""
         };
 
         this.editNextLine = this.editNextLine.bind(this);
@@ -86,7 +70,7 @@ class Home extends Component {
             .get(`${API_URL}/line`, {
                 params: {
                     lineId: this.props.match.params.lineId,
-                    validateLines,
+                    validateLines
                 }
             })
             .then(response => {
@@ -105,27 +89,14 @@ class Home extends Component {
     componentDidUpdate(prevProps) {
         if (prevProps.match.params.lineId !== this.props.match.params.lineId) {
             this.fetchLine();
-            
         }
     }
-  
-  editNextLine(event) {
-    this.setState({
-      nextLine: event.target.value,
-    });
-    var poem = this.getCurrentLimerick();
-    var syllable = require('syllable');
-    this.state.syllableCount = syllable(event.target.value);
-    if (poem.length == 0 || poem.length == 1 || poem.length == 4){
-    this.state.min_syll  = 8;
-    this.state.max_syll = 9;
-		}
-		else 
-		{
-		this.state.min_syll = 5;
-		this.state.max_syll = 6;
-		}
-  }
+
+    editNextLine(event) {
+        this.setState({
+            nextLine: event.target.value
+        });
+    }
 
     // Get array of lines in the current limerick
     getCurrentLimerick() {
@@ -172,6 +143,18 @@ class Home extends Component {
         if (this.state.ancestors.length === 4) {
             return null;
         }
+
+        const syllableCount = syllable(this.state.nextLine);
+        const poem = this.getCurrentLimerick();
+        let minSyll, maxSyll;
+        if (poem.length === 0 || poem.length === 1 || poem.length === 4) {
+            minSyll = 8;
+            maxSyll = 9;
+        } else {
+            minSyll = 5;
+            maxSyll = 6;
+        }
+
         return (
             <div>
                 {this.state.children.length > 0 ? (
@@ -189,8 +172,16 @@ class Home extends Component {
                         Submit
                     </button>
                 </div>
-                <div className={(this.state.syllableCount === this.state.min_syll || this.state.syllableCount === this.state.max_syll) ? "green" : "red" } >
-                Syllable Count: {this.state.syllableCount}
+                <div
+                    className={
+                        syllableCount === minSyll || syllableCount === maxSyll
+                            ? "syllable-count green"
+                            : "syllable-count black"
+                    }
+                >
+                    {this.state.nextLine.length > 0
+                        ? `Syllable Count: ${syllableCount}`
+                        : ""}
                 </div>
             </div>
         );

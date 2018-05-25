@@ -35,3 +35,17 @@ button:focus {
   background: none;
   cursor: default;
 }
+
+.syllable-count {
+  height: 15px;
+  margin-top: 5px;
+  font-size: 0.8em;
+}
+
+.syllable-count.black {
+  font-style: italic;
+}
+
+.syllable-count.green {
+  color: green;
+}

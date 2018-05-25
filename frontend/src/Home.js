@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import syllable from "syllable";
 import "./Home.css";
 import { API_URL } from "./constants";
 import { validateLines, userId } from "./userInfo";
@@ -10,8 +11,7 @@ class Home extends Component {
     super(props);
     this.state = {
       firstLine: "",
-      firstLines: [],
-      syllableCount: 0
+      firstLines: []
     };
 
     this.editFirstLine = this.editFirstLine.bind(this);
@@ -40,8 +40,6 @@ class Home extends Component {
     this.setState({
       firstLine: event.target.value
     });
-     var syllable = require('syllable');
-    this.state.syllableCount = syllable(event.target.value);
   }
 
   submitFirstLine() {
@@ -63,6 +61,8 @@ class Home extends Component {
   }
 
   render() {
+    const syllableCount = syllable(this.state.firstLine);
+
     return (
       <div className="Home">
         <div className="entry">
@@ -76,8 +76,16 @@ class Home extends Component {
             Submit
           </button>
         </div>
-        <div className={(this.state.syllableCount === 8 || this.state.syllableCount === 9) ? "green" : "red" } >
-                Syllable Count: {this.state.syllableCount}
+        <div
+          className={
+            syllableCount === 8 || syllableCount === 9
+              ? "syllable-count green"
+              : "syllable-count black"
+          }
+        >
+          {this.state.firstLine.length > 0
+            ? `Syllable Count: ${syllableCount}`
+            : ""}
         </div>
         <h3>Or choose an existing one:</h3>
         {this.state.firstLines.map(firstLine => (

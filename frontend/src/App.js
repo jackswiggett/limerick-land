@@ -10,7 +10,7 @@ import "./Line.css";
 import Home from "./Home";
 import { API_URL } from "./constants";
 import Line from "./Line";
-import { validateLines, userId } from "./userInfo";
+import { validateLines } from "./userInfo";
 
 class App extends Component {
   constructor(props) {
