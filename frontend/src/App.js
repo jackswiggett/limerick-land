@@ -1,17 +1,26 @@
 import axios from "axios";
+import createHistory from "history/createBrowserHistory";
 import React, { Component } from "react";
-import ReactGA from 'react-ga';
+import ReactGA from "react-ga";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import headerImg from "./header.png";
 import rulesImg from "./rules.png";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { Router, Route, Link } from "react-router-dom";
 import "./App.css";
 import "./Line.css";
 import Home from "./Home";
 import { API_URL } from "./constants";
 import Line from "./Line";
 import { validateLines } from "./userInfo";
+
+// Create router history and track with GA
+// https://github.com/react-ga/react-ga/issues/122
+const history = createHistory();
+history.listen((location, action) => {
+  ReactGA.set({ page: location.pathname });
+  ReactGA.pageview(location.pathname);
+});
 
 class App extends Component {
   constructor(props) {
@@ -20,9 +29,15 @@ class App extends Component {
       lineID: null,
       showHelp: true
     };
+
     // Add your tracking ID created from https://analytics.google.com/analytics/web/#home/
-    ReactGA.initialize('UA-119824484-1');
-    // This just needs to be called once since we have no routes in this case.
+    ReactGA.initialize("UA-119824484-1");
+
+    // Track whether this user has rhyme checking enabled
+    ReactGA.set({
+      dimension1: validateLines ? "YES" : "NO"
+    });
+
     ReactGA.pageview(window.location.pathname);
   }
 
@@ -47,7 +62,7 @@ class App extends Component {
 
   render() {
     return (
-      <Router>
+      <Router history={history}>
         <div className="App">
           <ToastContainer />
           <a href="/">
