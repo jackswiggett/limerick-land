@@ -26,5 +26,4 @@ const schema = new mongoose.Schema(
 
 schema.index({ createdAt: 1 });
 
-module.exports.ValidatedLine = mongoose.model("ValidatedLine", schema); // lines with rhyme checking
-module.exports.UnvalidatedLine = mongoose.model("UnvalidatedLine", schema); // lines with no rhyme checking
+module.exports = mongoose.model("Line", schema);
