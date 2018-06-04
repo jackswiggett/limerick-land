@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { Component } from "react";
 import ReactGA from "react-ga";
+import FaExclamationTriangle from "react-icons/lib/fa/exclamation-triangle";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import headerImg from "./header.png";
@@ -23,8 +24,11 @@ class App extends Component {
 
     // Add your tracking ID created from https://analytics.google.com/analytics/web/#home/
     ReactGA.initialize("UA-119824484-1");
-
     ReactGA.pageview(window.location.pathname);
+
+    this.reportInappropriateContent = this.reportInappropriateContent.bind(
+      this
+    );
   }
 
   componentWillMount() {
@@ -40,10 +44,42 @@ class App extends Component {
     });
   };
 
+  reportInappropriateContent() {
+    const reportContentSubject = encodeURIComponent(
+      "Report inappropriate content"
+    );
+
+    const reportContentBody = encodeURIComponent(
+      "Thank you for taking the time to report inappropriate content. " +
+        'Please fill in the following information and click "send". ' +
+        "We will review your email and remove the content if necessary.\n\n" +
+        "URL: " +
+        window.location.href +
+        "\n\n" +
+        "Reason for reporting content:" +
+        "\n\n"
+    );
+
+    const reportContentURL =
+      "mailto:limericklandcontact@gmail.com" +
+      "?subject=" +
+      reportContentSubject +
+      "&body=" +
+      reportContentBody;
+
+    window.open(reportContentURL);
+  }
+
   render() {
     return (
       <Router history={history}>
         <div className="App">
+          <div className="App-report-content-box">
+            <a onClick={this.reportInappropriateContent}>
+              <FaExclamationTriangle className="App-report-icon" />
+              {"Report inappropriate content"}
+            </a>
+          </div>
           <ToastContainer />
           <a href="/">
             <header className="App-header">

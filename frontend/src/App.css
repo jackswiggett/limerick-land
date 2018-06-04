@@ -81,6 +81,28 @@ body {
     color: blue;
 }
 
+.App-report-content-box {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    background: white;
+    padding: 5px;
+    font-size: 0.8em;
+}
+
+.App-report-content-box a {
+    color: #5d94d0;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.App-report-icon {
+    font-size: 0.9em;
+    margin-right: 5px;
+}
+
 .content {
     display: flex;
     width: 100%;
