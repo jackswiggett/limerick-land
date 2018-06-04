@@ -24,7 +24,7 @@ button:focus {
 
 .line-link {
   display: block;
-  margin: 10px auto;
+  margin: 5px auto;
 }
 
 .line-link:hover {
@@ -36,16 +36,8 @@ button:focus {
   cursor: default;
 }
 
-.syllable-count {
-  height: 15px;
-  margin-top: 5px;
-  font-size: 0.8em;
-}
-
-.syllable-count.black {
-  font-style: italic;
-}
-
-.syllable-count.green {
-  color: green;
+.centered-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

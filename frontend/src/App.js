@@ -1,5 +1,4 @@
 import axios from "axios";
-import createHistory from "history/createBrowserHistory";
 import React, { Component } from "react";
 import ReactGA from "react-ga";
 import { ToastContainer } from "react-toastify";
@@ -12,15 +11,7 @@ import "./Line.css";
 import Home from "./Home";
 import { API_URL } from "./constants";
 import Line from "./Line";
-import { validateLines } from "./userInfo";
-
-// Create router history and track with GA
-// https://github.com/react-ga/react-ga/issues/122
-const history = createHistory();
-history.listen((location, action) => {
-  ReactGA.set({ page: location.pathname });
-  ReactGA.pageview(location.pathname);
-});
+import history from "./routerHistory";
 
 class App extends Component {
   constructor(props) {
@@ -33,11 +24,6 @@ class App extends Component {
     // Add your tracking ID created from https://analytics.google.com/analytics/web/#home/
     ReactGA.initialize("UA-119824484-1");
 
-    // Track whether this user has rhyme checking enabled
-    ReactGA.set({
-      dimension1: validateLines ? "YES" : "NO"
-    });
-
     ReactGA.pageview(window.location.pathname);
   }
 
@@ -46,18 +32,12 @@ class App extends Component {
   }
 
   fetchRandomPoem = () => {
-    axios
-      .get(`${API_URL}/randpoem`, {
-        params: {
-          validateLines
-        }
-      })
-      .then(response => {
-        var result = response.data.lineId;
-        this.setState({
-          lineID: result
-        });
+    axios.get(`${API_URL}/randpoem`).then(response => {
+      var result = response.data.lineId;
+      this.setState({
+        lineID: result
       });
+    });
   };
 
   render() {

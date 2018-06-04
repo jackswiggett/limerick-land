@@ -23,7 +23,7 @@ app.post("/firstline", async (req, res) => {
     userId: req.body.userId
   });
   await line.save();
-  res.end();
+  res.json({ lineId: line.id });
 });
 
 // get all existing first lines
@@ -52,7 +52,7 @@ app.post("/line", async (req, res) => {
   parent.children.push(line._id);
   await parent.save();
 
-  res.end("Success");
+  res.json({ lineId: line.id });
 });
 
 // get a line along with its ancestors and children

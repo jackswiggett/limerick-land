@@ -1,31 +1,3 @@
-.Line-next-line {
-    width: 270px;
-    height: 20px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    font-size: 12px;
-    padding-left: 6px;
-    margin-top: 10px;
-    height: 32px;
-}
-
-.submit {
-    background: #f1f1f1;
-    height: 32px;
-    margin-top: 10px;
-}
-
-.entry {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
-.submit:hover {
-    background: #ddd;
-    cursor: pointer;
-}
-
 .Line-ancestors .line-link {
     font-family: "Kavivanar", cursive;
     font-size: 1.2em;
