@@ -9,6 +9,27 @@
     margin-right: 30px;
 }
 
+.Line-back-button {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.Line-back-button:hover {
+  color: #777;
+}
+
+.Line-back-icon {
+  margin-right: 6px;
+  padding-top: 1px;
+  font-size: 0.9em;
+}
+
 @media (max-width: 350px) {
     .Line-next-line {
         width: 220px;

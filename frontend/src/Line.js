@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { Component } from "react";
+import FaChevronLeft from "react-icons/lib/fa/chevron-left";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import "./Line.css";
@@ -18,6 +19,7 @@ class Home extends Component {
         };
         this.submitNextLine = this.submitNextLine.bind(this);
         this.renderLineLink = this.renderLineLink.bind(this);
+        this.goBack = this.goBack.bind(this);
     }
 
     fetchLine() {
@@ -67,6 +69,16 @@ class Home extends Component {
         }
     }
 
+    goBack() {
+        const { ancestors } = this.state;
+        if (ancestors.length > 0) {
+            const lastAncestor = ancestors[ancestors.length - 1];
+            history.push(`/line/${lastAncestor._id}`);
+        } else {
+            history.push("/");
+        }
+    }
+
     renderLineLink(line) {
         return (
             <Link key={line._id} className="line-link" to={`/line/${line._id}`}>
@@ -97,6 +109,10 @@ class Home extends Component {
     render() {
         return (
             <div className="Line centered-col">
+                <button className="Line-back-button" onClick={this.goBack}>
+                    <FaChevronLeft className="Line-back-icon" />
+                    Back
+                </button>
                 <div className="Line-ancestors">
                     {this.state.ancestors.map(this.renderLineLink)}
                     <span className="line-link no-hover">
